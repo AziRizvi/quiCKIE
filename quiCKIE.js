@@ -4,7 +4,7 @@
 
 // @name        quiCKIE [Modified Fork]
 // @author      WirlyWirly + Contributors 🫶
-// @version     1.51 Modified Forked
+// @version     1.51 Modified Fork
 
 // ----------------------------------- Version History --------------------------------------
 
