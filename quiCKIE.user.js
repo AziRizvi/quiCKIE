@@ -1733,7 +1733,7 @@ if ( primaryDomain == 'animebytes' ) {
     }
 	
     if ( pageURL.match(/browse\.php/) ) {
-        // This is a details page, so apply styling to the only bunnyButton
+        // Apply styling to only the bunnyButton
 
         trackerHandlingOptions.bunnyButtonText = '🧲'
         trackerHandlingOptions.bunnyButtonAddStyles = `
