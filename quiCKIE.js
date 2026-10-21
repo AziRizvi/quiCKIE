@@ -1731,7 +1731,19 @@ if ( primaryDomain == 'animebytes' ) {
     let trackerHandlingOptions = {
         downloadElementsSelector: 'a[href^="download/"]',
     }
+	
+    if ( pageURL.match(/browse\.php/) ) {
+        // This is a details page, so apply styling to the only bunnyButton
 
+        trackerHandlingOptions.bunnyButtonText = '🧲'
+        trackerHandlingOptions.bunnyButtonAddStyles = `
+            font-size: 1.05rem;
+            position: relative;
+            top: -1.7px;
+            margin-left: 6px;
+        `
+    }
+	
     quickieTrackerHandler(trackerHandlingOptions)
 
 } else if ( primaryDomain == 'darkpeers' ) {
