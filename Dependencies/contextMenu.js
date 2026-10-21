@@ -1,0 +1,152 @@
+// Sourced @ https://www.cssscript.com/cool-custom-context-menu/
+
+class ContextMenu {
+  constructor({ target = null, menuItems = [], mode = "dark" }) {
+    this.target = target;
+    this.menuItems = menuItems;
+    this.mode = mode;
+    this.targetNode = this.getTargetNode();
+    this.menuItemsNode = this.getMenuItemsNode();
+    this.isOpened = false;
+  }
+
+  getTargetNode() {
+    const nodes = document.querySelectorAll(this.target);
+
+    if (nodes && nodes.length !== 0) {
+      return nodes;
+    } else {
+    // console.error(`quiCKIE: contextMenu.js | getTargetNode :: "${this.target}" target not found`);
+      return [];
+    }
+  }
+
+  getMenuItemsNode() {
+    const nodes = [];
+
+    if (!this.menuItems) {
+      console.error("getMenuItemsNode :: Please enter menu items");
+      return [];
+    }
+
+    this.menuItems.forEach((data, index) => {
+      const item = this.createItemMarkup(data);
+      item.firstChild.setAttribute(
+        "style",
+        `animation-delay: ${index * 0.020}s`
+      );
+      nodes.push(item);
+    });
+
+    return nodes;
+  }
+
+  createItemMarkup(data) {
+    const button = document.createElement("BUTTON");
+    const item = document.createElement("LI");
+
+    if ( data.content ) {
+        button.innerHTML = data.content
+    }
+
+    button.classList.add("contextMenu-button");
+    item.classList.add("contextMenu-item");
+
+    if (data.divider) {
+        // This is a divider, so mark the LI and BUTTON
+        item.setAttribute("data-divider", data.divider);
+        button.setAttribute("data-divider", data.divider);
+    }
+
+    item.appendChild(button);
+
+    if (data.events && data.events.length !== 0) {
+      Object.entries(data.events).forEach((event) => {
+        const [key, value] = event;
+        button.addEventListener(key, value);
+      });
+    }
+
+    return item;
+  }
+
+  renderMenu() {
+    const menuContainer = document.createElement("UL");
+
+    menuContainer.classList.add("contextMenu");
+    menuContainer.setAttribute("data-theme", this.mode);
+
+    this.menuItemsNode.forEach((item) => menuContainer.appendChild(item));
+
+    return menuContainer;
+  }
+
+  closeMenu(menu) {
+    if (this.isOpened) {
+      this.isOpened = false;
+
+      menu.remove();
+    }
+
+    // No menu item was selected, so remove the ID from the clicked-on element
+    try{
+        document.getElementById('__CONTEXTCLICKED__').removeAttribute('id')
+    } catch(error) {}
+  }
+
+  init() {
+    const contextMenu = this.renderMenu();
+    document.addEventListener("click", () => this.closeMenu(contextMenu));
+    window.addEventListener("blur", () => this.closeMenu(contextMenu));
+    // document.addEventListener("contextmenu", (e) => {
+    //   this.targetNode.forEach((target) => {
+    //     if (!e.target.contains(target)) {
+    //       contextMenu.remove();
+    //     }
+    //   });
+    // });
+
+    this.targetNode.forEach((target) => {
+        // This target element (bunnyButton) has not yet had a contextmenu event attached to it
+
+        target.addEventListener("contextmenu", (e) => {
+
+        // For later reference, mark this target element (BunnyButton) as having been the element that was right-clicked on to open the context menu
+        let targetElementId = `quiCKIE_bb_${Date.now()}`
+        target.id = targetElementId
+
+        e.preventDefault();
+        this.isOpened = true;
+
+        const { clientX, clientY } = e;
+        document.body.appendChild(contextMenu);
+
+        contextMenu.querySelectorAll('button.contextMenu-button').forEach( button => {
+                button.setAttribute('data-targetid', targetElementId)
+        } )
+
+        const positionY =
+          clientY + contextMenu.scrollHeight >= window.innerHeight
+            ? window.innerHeight - contextMenu.scrollHeight - 20
+            : clientY;
+        const positionX =
+          clientX + contextMenu.scrollWidth >= window.innerWidth
+            ? window.innerWidth - contextMenu.scrollWidth - 20
+            : clientX;
+
+        contextMenu.setAttribute(
+          "style",
+          `--width: ${contextMenu.scrollWidth}px;
+          --height: ${contextMenu.scrollHeight}px;
+          --top: ${positionY}px;
+          --left: ${positionX}px;`
+        );
+
+      });
+
+      // Remove the class that identifies this as a new BunnyButton without a presetsMenu
+      target.classList.remove('quickie_newBunnyButton')
+
+    });
+  }
+}
