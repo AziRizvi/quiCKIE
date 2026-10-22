@@ -93,7 +93,6 @@
 // 			Baozi
 // @match   https://p.t-baozi.cc/details.php*
 // @match   https://p.t-baozi.cc/torrents.php*
-
 //          Beyond-HD
 // @match   https://beyond-hd.me/
 // @match   https://beyond-hd.me/bookmarks*
@@ -274,6 +273,12 @@
 // @match   https://hd-torrents.org/
 // @match   https://hd-torrents.org/torrents.php*
 // @match   https://hd-torrents.org/details.php**
+
+//          HDZero
+// @match   https://hdzero.org/
+// @match   https://hdzero.org/*/bookmarks
+// @match   https://hdzero.org/playlists/*
+// @match   https://hdzero.org/torrents*
 
 //          HHClub
 // @match   https://hhanclub.net/torrents.php*
@@ -571,6 +576,12 @@
 // @match   https://upload.cx/*/bookmarks
 // @match   https://upload.cx/playlists/*
 // @match   https://upload.cx/torrents*
+
+//          VietMediaF
+// @match   https://tracker.vietmediaf.store/
+// @match   https://tracker.vietmediaf.store/*/bookmarks
+// @match   https://tracker.vietmediaf.store/playlists/*
+// @match   https://tracker.vietmediaf.store/torrents*
 
 //          Yu-Scene
 // @match   https://yu-scene.net/
@@ -872,6 +883,13 @@ const settingsPanelTrackers = [
         homepageURL: 'https://hd-torrents.org',
         primaryDomain: 'hd-torrents',
     },
+
+    {
+        trackerName: 'HDZero',
+        homepageURL: 'https://hdzero.org',
+        primaryDomain: 'hdzero',
+    },
+
     {
         trackerName: 'HHClub', // @verinikat
         homepageURL: 'https://hhanclub.net',
@@ -1211,6 +1229,12 @@ const settingsPanelTrackers = [
         trackerName: 'UploadCX', // @verinikat
         homepageURL: 'https://upload.cx',
         primaryDomain: 'upload',
+    },
+
+    {
+        trackerName: 'VietMediaF',
+        homepageURL: 'tracker.vietmediaf.store',
+        primaryDomain: 'vietmediaf',
     },
 
     {
@@ -1731,7 +1755,7 @@ if ( primaryDomain == 'animebytes' ) {
     let trackerHandlingOptions = {
         downloadElementsSelector: 'a[href^="download/"]',
     }
-	
+
     if ( pageURL.match(/browse\.php/) ) {
         // Apply styling to only the bunnyButton
 
@@ -1743,7 +1767,19 @@ if ( primaryDomain == 'animebytes' ) {
             margin-left: 6px;
         `
     }
-	
+
+    if ( pageURL.match(/details\.php/) ) {
+        // This is a details page, so apply styling to the only bunnyButton
+
+        trackerHandlingOptions.bunnyButtonText = '🧲'
+        trackerHandlingOptions.bunnyButtonAddStyles = `
+            font-size: 1.65rem;
+            position: relative;
+            top: 1.5px;
+            margin-left: 5px;
+        `
+    }
+
     quickieTrackerHandler(trackerHandlingOptions)
 
 } else if ( primaryDomain == 'darkpeers' ) {
@@ -2185,6 +2221,16 @@ if ( primaryDomain == 'animebytes' ) {
 
     quickieTrackerHandler(trackerHandlingOptions)
 
+} else if ( primaryDomain == 'hdzero' ) {
+    // ----------------------------------- HDZero -----------------------------------
+    // Browse | Details | Homepage | Playlists | Similar
+
+    let trackerHandlingOptions = {
+        downloadElementsSelector: 'a[href^="https://hdzero.org/torrents/download/"]'
+    }
+
+    unit3dTrackerHandler(trackerHandlingOptions)
+
 } else if ( primaryDomain == 'hhanclub' ) {
     // ----------------------------------- HHCLUB -----------------------------------
     // Browse | Details | Rescues
@@ -2371,6 +2417,16 @@ if ( primaryDomain == 'animebytes' ) {
 
     let trackerHandlingOptions = {
         downloadElementsSelector: 'a[href^="https://lst.gg/torrents/download"]'
+    }
+
+    if ( pageURL.match(/\/torrents(?:\?page=\d+)?$/) ) {
+        // Apply styling to only the bunnyButton
+
+        trackerHandlingOptions.bunnyButtonText = '🧲'
+        trackerHandlingOptions.bunnyButtonAddStyles = `
+            font-size: 2.10rem;
+            position: relative;
+            top: -1px;        `
     }
 
     unit3dTrackerHandler(trackerHandlingOptions)
@@ -2799,6 +2855,8 @@ if ( primaryDomain == 'animebytes' ) {
         downloadElementsSelector: 'a[href^="https://privatehd.to/download/torrent/"]',
         freeleechStatusSelector: `downloadElement.closest('tr').querySelector('i[data-original-title="Free Download"], i[title="Free Download"]')`,
         seedingStatusSelector: `downloadElement.closest('tr.success')`,
+        snatchedStatusSelector: `downloadElement.closest('tr.warning')`,
+		
     }
 
     // Movie or TV shows details page, both of which have pagination
@@ -2814,6 +2872,8 @@ if ( primaryDomain == 'animebytes' ) {
         trackerHandlingOptions.bunnyButtonText = '🧲 quiCKIE'
         trackerHandlingOptions.freeleechStatusSelector = `document.querySelector('i[data-original-title="Free Download"]')`
         trackerHandlingOptions.seedingStatusSelector = `document.querySelector('a[title="Active Torrents"]')`
+        trackerHandlingOptions.snatchedStatusSelector = `document.querySelector('a[title="Download History"]')`
+
     }
 
     quickieTrackerHandler(trackerHandlingOptions)
@@ -3146,13 +3206,22 @@ if ( primaryDomain == 'animebytes' ) {
 
     unit3dTrackerHandler(trackerHandlingOptions)
 
-
 } else if ( primaryDomain == 'upload' ) {
     // ----------------------------------- UploadCX -----------------------------------
     // Browse | Details | Homepage | Playlists | Similar
 
     let trackerHandlingOptions = {
         downloadElementsSelector: 'a[href^="https://upload.cx/torrents/download/"]'
+    }
+
+    unit3dTrackerHandler(trackerHandlingOptions)
+
+} else if ( primaryDomain == 'vietmediaf' ) {
+    // ----------------------------------- VietMediaF -----------------------------------
+    // Browse | Details | Homepage | Playlists | Similar
+
+    let trackerHandlingOptions = {
+        downloadElementsSelector: 'a[href^="https://tracker.vietmediaf.store/torrents/download/"]'
     }
 
     unit3dTrackerHandler(trackerHandlingOptions)
