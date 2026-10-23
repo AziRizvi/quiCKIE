@@ -244,10 +244,7 @@
 // @match   https://gazellegames.net/bookmarks.php*
 
 //          Generation-Free
-// @match   https://generation-free.org/
-// @match   https://generation-free.org/*/bookmarks*
-// @match   https://generation-free.org/playlists/*
-// @match   https://generation-free.org/torrents*
+// @match   https://generation-free.org/torrents/download_check*
 
 //          GreatPosterWall
 // @match   https://greatposterwall.com/torrents.php*
